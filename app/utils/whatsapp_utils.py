@@ -12,6 +12,7 @@ from app.utils.whatsapp_message_storage import (MessagesCollection,
                                                 messages_storage,
                                                 clear_media)
 from app.utils.whatsapp_media_processor import save_media
+import app.strings.strings_en as strings
 
 def log_http_response(response):
     logging.info(f"Status: {response.status_code}")
@@ -31,7 +32,7 @@ def get_text_message_input(recipient, text):
 
 def generate_response(messages_collection: MessagesCollection):
     # Send query to genai
-    return process_messages_with_ai(messages_collection.input_messages, MessagesCollection.lang)
+    return process_messages_with_ai(messages_collection.input_messages, messages_collection.lang)
 
 def send_message(data):
     headers = {
@@ -60,16 +61,25 @@ def send_message(data):
         return response
 
 def process_whatsapp_message(body):
-    wa_id = body["entry"][0]["changes"][0]["value"]["contacts"][0]["wa_id"]
+    """
+    Function takes the message from param 'body', stores it in the messages collection
+    and initiates AI request for summarizing if the keywords "read english" or "read russian" were found.
+    For each sender id (phone number) message collection is separate.
+    Media files (images, document or voice messages) are stored in the resource folder until AI request is sent
+    and then are cleared
+    """
+    client_id = body["entry"][0]["changes"][0]["value"]["contacts"][0]["wa_id"]
     name = body["entry"][0]["changes"][0]["value"]["contacts"][0]["profile"]["name"]
+
+    logging.debug(f"Incoming message from {client_id}({name})")
 
     message = body["entry"][0]["changes"][0]["value"]["messages"][0]
     message_type = message["type"]
 
-    if wa_id not in messages_storage.keys():
-        messages_storage[wa_id] = MessagesCollection()
+    if client_id not in messages_storage.keys():
+        messages_storage[client_id] = MessagesCollection()
 
-    messages_collection = messages_storage[wa_id]
+    messages_collection = messages_storage[client_id]
 
     # Processing only text and media messages (excluding stickers and videos)
     match message_type:
@@ -77,7 +87,7 @@ def process_whatsapp_message(body):
             # Extract media ID from webhook payload
             media_id = message[message_type]["id"]
             media_type = message[message_type]["mime_type"]
-            save_media(media_id, media_type, messages_collection, wa_id)
+            save_media(media_id, media_type, messages_collection, client_id)
             # Add media message caption as a separate text message
             try:
                 caption = message[message_type]["caption"]
@@ -103,11 +113,20 @@ def process_whatsapp_message(body):
                 messages_collection.empty = False
 
             if send_summary and not messages_collection.empty:
+                logging.debug(f"Running AI prompt for {client_id}({name})")
                 response = generate_response(messages_collection)
+                logging.debug(f"AI prompt finished for {client_id}({name})")
+
+                # remove messages, media and reset 'empty' flag for the client_id
                 messages_collection.input_messages.clear()
-                clear_media(wa_id)
+                clear_media(client_id)
                 messages_collection.empty = True
-                data = get_text_message_input(wa_id, response)
+
+                # Form response and send
+                data = get_text_message_input(client_id, response)
+                send_message(data)
+            elif send_summary and messages_collection.empty:
+                data = get_text_message_input(client_id, strings.no_messages_to_summarize)
                 send_message(data)
 
 

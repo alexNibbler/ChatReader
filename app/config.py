@@ -17,8 +17,10 @@ def load_configurations(app):
 
 
 def configure_logging():
+    dev_mode = os.getenv("DEBUG_MODE").lower() in ["true", "yes", "dev", "debug", "verbose"]
+    log_level = logging.DEBUG if dev_mode else logging.INFO
     logging.basicConfig(
-        level=logging.INFO,
+        level=log_level,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         stream=sys.stdout,
     )

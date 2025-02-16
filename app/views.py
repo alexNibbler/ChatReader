@@ -65,11 +65,11 @@ def verify():
         # Check the mode and token sent are correct
         if mode == "subscribe" and token == current_app.config["VERIFY_TOKEN"]:
             # Respond with 200 OK and challenge token from the request
-            logging.info("WEBHOOK_VERIFIED")
+            # logging.info("WEBHOOK_VERIFIED")
             return challenge, 200
         else:
             # Responds with '403 Forbidden' if verify tokens do not match
-            logging.info("VERIFICATION_FAILED")
+            logging.warning("VERIFICATION_FAILED")
             return jsonify({"status": "error", "message": "Verification failed"}), 403
     else:
         # Responds with '400 Bad Request' if verify tokens do not match
