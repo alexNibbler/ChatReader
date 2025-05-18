@@ -1,5 +1,10 @@
 # Project Structure Explanation
 
+## Disclaimer
+This readme is taken from https://github.com/daveebbelaar/python-whatsapp-bot/tree/main and describes how this code works
+
+## Intro
+
 Welcome to the project! This structure is based on the Flask framework and uses the "Flask Factory Pattern". For those new to Flask or this design pattern, let's break down what each file and directory is for and how they work together.
 
 ## Directory Structure:
@@ -14,16 +19,19 @@ This is the main application directory containing all the core files for our Fla
 - `decorators/`: Contains Python decorators that can be used across the application.
   - `security.py`: Houses security-related decorators, for example, to check the validity of incoming requests.
 
+- `services/`: Contains integrations with 3rd party services
+  - `genai_service.py`: Service that leverages generative ai to process the input and return result
+
+- `strings/`: Contains strings to be shown to the user and prompts for gen_ai. Each filename ends with language code, for example `en` for English
+
 - `utils/`: Utility functions and helpers to aid different functionalities in the application.
-  - `whatsapp_utils.py`: Contains utility functions specifically for handling WhatsApp related operations.
+  - `whatsapp_*.py`: Contains utility functions specifically for handling WhatsApp related operations.
 
 - `views.py`: Represents the main blueprint of the app where the endpoints are defined. In Flask, a blueprint is a way to organize related views and operations. Think of it as a mini-application within the main application with its routes and errors.
 
 ## Main Files:
 
 - `run.py`: This is the entry point to run the Flask application. It sets up and runs our Flask app on a server.
-
-- `quickstart.py`: A quickstart guide or tutorial-like code to help new users/developers understand how to start using or contributing to the project.
 
 - `requirements.txt`: Lists all the Python packages and libraries required for this project. They can be installed using `pip`.
 
