@@ -17,10 +17,23 @@ def load_configurations(app):
 
 
 def configure_logging():
+    """
+    1. Set verbose level according to env variable DEBUG_MODE
+    2. Set format of the log as <date> <log_level> <module>: <message>
+    3. Levels INFO and below are sent to stdout, WARNING and above to stderr
+    """
     dev_mode = os.getenv("DEBUG_MODE").lower() in ["true", "yes", "dev", "debug", "verbose"]
     log_level = logging.DEBUG if dev_mode else logging.INFO
-    logging.basicConfig(
-        level=log_level,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        stream=sys.stdout,
-    )
+    logging.basicConfig(level=log_level, format="%(asctime)s %(levelname)s %(module)s: %(message)s")
+
+    _logger = logging.getLogger()
+
+    # log lower levels to stdout
+    stdout_handler = logging.StreamHandler(stream=sys.stdout)
+    stdout_handler.addFilter(lambda rec: rec.levelno <= logging.INFO)
+    _logger.addHandler(stdout_handler)
+
+    # log higher levels to stderr (red)
+    stderr_handler = logging.StreamHandler(stream=sys.stderr)
+    stderr_handler.addFilter(lambda rec: rec.levelno > logging.INFO)
+    _logger.addHandler(stderr_handler)
