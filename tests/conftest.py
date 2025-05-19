@@ -1,6 +1,9 @@
 import pytest
 import requests
 
+from dotenv import load_dotenv
+load_dotenv(dotenv_path=".env.test")
+
 @pytest.fixture(autouse=True)
 def disable_network_calls(monkeypatch):
     def stunted_get():
