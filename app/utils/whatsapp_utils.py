@@ -87,15 +87,22 @@ def process_whatsapp_message(body):
             # Extract media ID from webhook payload
             media_id = message[message_type]["id"]
             media_type = message[message_type]["mime_type"]
-            save_media(media_id, media_type, messages_collection, client_id)
-            # Add media message caption as a separate text message
+            messages_collection.is_media_downloading = True
             try:
+                save_media(media_id, media_type, messages_collection, client_id)
+                messages_collection.empty = False
+                # Add media message caption as a separate text message
                 caption = message[message_type]["caption"]
                 messages_collection.input_messages.append(InputMessage(type=InputMessageType.TEXT,
                                                                        value=caption))
             except KeyError:
                 ... # some messages do not have "caption" field, it's ok
-            messages_collection.empty = False
+            finally:
+                messages_collection.is_media_downloading = False
+            if messages_collection.media_ready_notification_required:
+                messages_collection.media_ready_notification_required = False
+                data = get_text_message_input(client_id, strings.media_is_loaded_notification)
+                send_message(data)
 
         case "text":
             message_body: str = message["text"]["body"]
@@ -124,6 +131,10 @@ def process_whatsapp_message(body):
 
                 # Form response and send
                 data = get_text_message_input(client_id, response)
+                send_message(data)
+            elif send_summary and messages_collection.is_media_downloading:
+                messages_collection.media_ready_notification_required = True
+                data = get_text_message_input(client_id, strings.media_is_not_loaded)
                 send_message(data)
             elif send_summary and messages_collection.empty:
                 data = get_text_message_input(client_id, strings.no_messages_to_summarize)
