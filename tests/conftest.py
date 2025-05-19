@@ -12,7 +12,7 @@ def disable_network_calls(monkeypatch):
 
 @pytest.fixture
 def whatsapp_message_text() -> str:
-    return '{"object": "whatsapp_business_account", "entry": [{"id": "604954029357507", "changes": [{"value": {"messaging_product": "whatsapp", "metadata": {"display_phone_number": "15551854000", "phone_number_id": "526485007222000"}, "contacts": [{"profile": {"name": "Sender Name"}, "wa_id": "972515100000"}], "messages": [{"from": "972515100000", "id": "wamid.HBgMOTcyNTE1MTMxMDMzFQIAEhggM0JEMTM1QTcxNEM5RUFDN0FGRUE2RUQ5MEVERjI3QjYA", "timestamp": "1747604849", "text": {"body": "Read english"}, "type": "text"}]}, "field": "messages"}]}]}'
+    return '{"object": "whatsapp_business_account", "entry": [{"id": "604954029357507", "changes": [{"value": {"messaging_product": "whatsapp", "metadata": {"display_phone_number": "15551854000", "phone_number_id": "526485007222000"}, "contacts": [{"profile": {"name": "Sender Name"}, "wa_id": "972515100000"}], "messages": [{"from": "972515100000", "id": "wamid.HBgMOTcyNTE1MTMxMDMzFQIAEhggM0JEMTM1QTcxNEM5RUFDN0FGRUE2RUQ5MEVERjI3QjYA", "timestamp": "1747604849", "text": {"body": "Some short text"}, "type": "text"}]}, "field": "messages"}]}]}'
 
 @pytest.fixture
 def whatsapp_message_image() -> str:
