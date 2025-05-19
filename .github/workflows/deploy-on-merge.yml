@@ -56,8 +56,9 @@ jobs:
         run: |
           gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev
 
-      - name: Print Docker config
-        run: cat ~/.docker/config.json
+      - name: Manually auth Docker (debug)
+        run: |
+          gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://${{ vars.GCP_REGION }}-docker.pkg.dev
 
       - name: Build Docker image
         run: |
