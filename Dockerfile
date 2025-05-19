@@ -7,4 +7,7 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
+ENV PYTHONPATH="/ChatReader"
+
+
 CMD ["python3", "run.py"]
