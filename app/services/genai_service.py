@@ -8,6 +8,7 @@ import logging
 
 import app.strings.strings_en as strings
 
+
 class ResponseLang(Enum):
     ENGLISH = "English"
     RUSSIAN = "Russian"
@@ -21,9 +22,14 @@ class InputMessage:
     type: InputMessageType
     value: str
 
-load_dotenv()
-GENAI_API_KEY = os.getenv("GENAI_API_KEY")
-client = genai.Client(api_key=GENAI_API_KEY)
+
+# client for gemini.ai. Should be initialized with configure_gen_ai_service()
+client = None
+
+def configure_gen_ai_service():
+    api_key = os.getenv("GENAI_API_KEY")
+    global client
+    client = genai.Client(api_key=api_key)
 
 def process_messages_with_ai(input_messages: List[InputMessage], lang: ResponseLang):
     """
