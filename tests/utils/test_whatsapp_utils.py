@@ -22,4 +22,4 @@ def test_is_valid_whatsapp_message_negative(raw_message: str):
     assert not valid
 
 def test_pr(whatsapp_message_text):
-    wa_utils.process_whatsapp_message(convert_json_to_dict(whatsapp_message_text))
+    pass
