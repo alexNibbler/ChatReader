@@ -53,9 +53,9 @@ def handle_message():
         logging.error("Failed to decode JSON")
         return jsonify({"status": "error", "message": "Invalid JSON provided"}), 400
 
-
-# Required webhook verification for WhatsApp
 def verify():
+    """Required webhook verification for WhatsApp"""
+
     # Parse params from the webhook verification request
     mode = request.args.get("hub.mode")
     token = request.args.get("hub.verify_token")

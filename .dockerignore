@@ -1,0 +1,32 @@
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore local envs and configs
+.env
+*.env
+*.local
+*.log
+
+# Ignore test folders
+tests/
+.coverage
+htmlcov/
+
+# Ignore version control
+.git
+.gitignore
+.github/
+
+# Ignore Docker-specific files not needed in image
+Dockerfile
+.dockerignore
+
+# Optional: IDE and OS files
+.vscode/
+.idea/
+*.DS_Store
+
+# Ignore temporary nad example files and folders
+media/
