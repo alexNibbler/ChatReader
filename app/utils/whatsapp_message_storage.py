@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List, Dict
 from pathlib import Path
+import shutil
 import logging
 import os
 
@@ -12,10 +13,12 @@ class MessagesCollection:
     input_messages: List[InputMessage] = field(default_factory=list)
     lang: ResponseLang = ResponseLang.ENGLISH
     empty: bool = True
+    is_media_downloading: bool = False
+    media_ready_notification_required: bool = False
 
 def get_media_directory(client_id: str = None):
     if client_id:
-        path_str = f"media/{client_id.strip("+")}"
+        path_str = f'media/{client_id.strip("+")}'
         path = Path(path_str)
         path.mkdir(parents=True, exist_ok=True)
         return path_str
@@ -30,15 +33,12 @@ def clear_media(client_id: str = None):
     path = Path(directory)
 
     if path.exists():
-        for item in path.glob("**/*"):
-            if item.is_file():
-                item.unlink()  # Remove file
-            elif item.is_dir():
-                item.rmdir()  # Remove empty directory
-
-        path.rmdir()  # Remove the root directory itself
+        try:
+            shutil.rmtree(path)
+        except Exception as ex:
+            logging.warning(f"Temp media directory '{directory}' could not be removed: {ex}")
     else:
-        logging.warning(f"Directory '{directory}' not found and cannot be cleared.")
+        logging.warning(f"Temp media directory '{directory}' not found and cannot be cleared.")
 
 
 messages_storage: Dict[str, MessagesCollection] = {}
