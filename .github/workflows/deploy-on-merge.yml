@@ -52,13 +52,14 @@ jobs:
           echo "VERSION_TAG=$VERSION_TAG" >> $GITHUB_ENV
           echo "Using tag: $VERSION_TAG"
 
-      - name: Configure Docker for Artifact Registry
+      - name: Authenticate with service account
         run: |
-          gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev
+          echo "${{ secrets.GCP_SA_KEY }}" > ${HOME}/gcloud-key.json
+          gcloud auth activate-service-account --key-file=${HOME}/gcloud-key.json
+          gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev --quiet
 
-      - name: Manually auth Docker (debug)
-        run: |
-          gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://${{ vars.GCP_REGION }}-docker.pkg.dev
+      - name: Show Docker config
+        run: cat ~/.docker/config.json
 
       - name: Build Docker image
         run: |
