@@ -56,6 +56,9 @@ jobs:
         run: |
           gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev
 
+      - name: Print Docker config
+        run: cat ~/.docker/config.json
+
       - name: Build Docker image
         run: |
           docker build -t ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/chat-reader-repo/chat-reader:$VERSION_TAG .
