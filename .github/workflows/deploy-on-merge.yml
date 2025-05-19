@@ -3,7 +3,7 @@ name: Deploy to Cloud Run
 on:
   push:
     branches:
-      - master  # triggers on both merges and direct pushes to master
+      - main  # triggers on both merges and direct pushes to master
 
 jobs:
   test:
