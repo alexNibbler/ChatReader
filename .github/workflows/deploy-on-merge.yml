@@ -40,7 +40,7 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          project_id: ${{ vars.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
 
@@ -54,20 +54,20 @@ jobs:
 
       - name: Configure Docker for Artifact Registry
         run: |
-          gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev
+          gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/chat-reader-repo/chat-reader:$VERSION_TAG .
+          docker build -t ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/chat-reader-repo/chat-reader:$VERSION_TAG .
 
       - name: Push Docker image
         run: |
-          docker push ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/chat-reader-repo/chat-reader:$VERSION_TAG
+          docker push ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/chat-reader-repo/chat-reader:$VERSION_TAG
 
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy your-service \
-            --image ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/chat-reader-repo/chat-reader:$VERSION_TAG \
-            --region ${{ secrets.GCP_REGION }} \
+            --image ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/chat-reader-repo/chat-reader:$VERSION_TAG \
+            --region ${{ vars.GCP_REGION }} \
             --platform managed \
             --allow-unauthenticated
