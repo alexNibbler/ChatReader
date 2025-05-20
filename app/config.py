@@ -22,7 +22,7 @@ def configure_logging():
     2. Set format of the log as <date> <log_level> <module>: <message>
     3. Levels INFO and below are sent to stdout, WARNING and above to stderr
     """
-    dev_mode = os.getenv("DEBUG_MODE").lower() in ["true", "yes", "dev", "debug", "verbose"]
+    dev_mode = os.getenv("DEBUG_MODE", "False").lower() in ["true", "yes", "dev", "debug", "verbose"]
     log_level = logging.DEBUG if dev_mode else logging.INFO
     logging.basicConfig(level=log_level, format="%(asctime)s %(levelname)s %(module)s: %(message)s")
 
