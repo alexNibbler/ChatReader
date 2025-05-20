@@ -57,9 +57,16 @@ jobs:
           echo "VERSION_TAG=$VERSION_TAG" >> $GITHUB_ENV
           echo "Using tag: $VERSION_TAG"
 
-      - name: Print active account
+      - name: Print gcloud active account
         run: |
           gcloud auth list
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev
+
+      - name: Print Docker config
+        run: cat ~/.docker/config.json
 
       - name: Build Docker image
         run: |
